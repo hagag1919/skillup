@@ -1,0 +1,1376 @@
+{
+	"info": {
+		"_postman_id": "skillup-api-collection",
+		"name": "SkillUp E-Learning Platform API",
+		"description": "Complete API collection for testing SkillUp e-learning platform endpoints including authentication, user management, course management, instructor operations, and admin functions.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Authentication",
+			"item": [
+				{
+					"name": "Register User",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"John Doe\",\n  \"email\": \"john.doe@example.com\",\n  \"password\": \"SecurePass123!\",\n  \"role\": \"STUDENT\",\n  \"bio\": \"A passionate learner interested in technology\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8888/api/auth/register",
+							"host": ["http://localhost:8888"],
+							"path": ["api", "auth", "register"]
+						}
+					}
+				},
+				{
+					"name": "Register Instructor",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Jane Smith\",\n  \"email\": \"jane.smith@example.com\",\n  \"password\": \"InstructorPass123!\",\n  \"role\": \"INSTRUCTOR\",\n  \"bio\": \"Experienced software developer and teacher\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8888/api/auth/register",
+							"host": ["http://localhost:8888"],
+							"path": ["api", "auth", "register"]
+						}
+					}
+				},
+				{
+					"name": "Register Admin",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Admin User\",\n  \"email\": \"admin@skillup.com\",\n  \"password\": \"AdminPass123!\",\n  \"role\": \"ADMIN\",\n  \"bio\": \"Platform administrator\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8888/api/auth/register",
+							"host": ["http://localhost:8888"],
+							"path": ["api", "auth", "register"]
+						}
+					}
+				},
+				{
+					"name": "Login Student",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200) {",
+									"    const response = pm.response.json();",
+									"    if (response.success && response.data.token) {",
+									"        pm.environment.set('studentToken', response.data.token);",
+									"        pm.environment.set('studentId', response.data.userId);",
+									"    }",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"john.doe@example.com\",\n  \"password\": \"SecurePass123!\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8888/api/auth/login",
+							"host": ["http://localhost:8888"],
+							"path": ["api", "auth", "login"]
+						}
+					}
+				},
+				{
+					"name": "Login Instructor",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200) {",
+									"    const response = pm.response.json();",
+									"    if (response.success && response.data.token) {",
+									"        pm.environment.set('instructorToken', response.data.token);",
+									"        pm.environment.set('instructorId', response.data.userId);",
+									"    }",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"jane.smith@example.com\",\n  \"password\": \"InstructorPass123!\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8888/api/auth/login",
+							"host": ["http://localhost:8888"],
+							"path": ["api", "auth", "login"]
+						}
+					}
+				},
+				{
+					"name": "Login Admin",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200) {",
+									"    const response = pm.response.json();",
+									"    if (response.success && response.data.token) {",
+									"        pm.environment.set('adminToken', response.data.token);",
+									"        pm.environment.set('adminId', response.data.userId);",
+									"    }",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"admin@skillup.com\",\n  \"password\": \"AdminPass123!\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8888/api/auth/login",
+							"host": ["http://localhost:8888"],
+							"path": ["api", "auth", "login"]
+						}
+					}
+				},
+				{
+					"name": "Validate Token",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{studentToken}}"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:8888/api/auth/validate",
+							"host": ["http://localhost:8888"],
+							"path": ["api", "auth", "validate"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "Health Check",
+			"item": [
+				{
+					"name": "Health Check",
+					"request": {
+						"method": "GET",
+						"url": {
+							"raw": "http://localhost:8888/api/health",
+							"host": ["http://localhost:8888"],
+							"path": ["api", "health"]
+						}
+					}
+				},
+				{
+					"name": "Welcome",
+					"request": {
+						"method": "GET",
+						"url": {
+							"raw": "http://localhost:8888/api/",
+							"host": ["http://localhost:8888"],
+							"path": ["api", ""]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "User Management",
+			"item": [
+				{
+					"name": "Get User by ID",
+					"request": {
+						"method": "GET",
+						"url": {
+							"raw": "http://localhost:8888/api/users/{{studentId}}",
+							"host": ["http://localhost:8888"],
+							"path": ["api", "users", "{{studentId}}"]
+						}
+					}
+				},
+				{
+					"name": "Get All Instructors",
+					"request": {
+						"method": "GET",
+						"url": {
+							"raw": "http://localhost:8888/api/users/instructors",
+							"host": ["http://localhost:8888"],
+							"path": ["api", "users", "instructors"]
+						}
+					}
+				},
+				{
+					"name": "Get All Students",
+					"request": {
+						"method": "GET",
+						"url": {
+							"raw": "http://localhost:8888/api/users/students",
+							"host": ["http://localhost:8888"],
+							"path": ["api", "users", "students"]
+						}
+					}
+				},
+				{
+					"name": "Search Users",
+					"request": {
+						"method": "GET",
+						"url": {
+							"raw": "http://localhost:8888/api/users/search?name=John",
+							"host": ["http://localhost:8888"],
+							"path": ["api", "users", "search"],
+							"query": [
+								{
+									"key": "name",
+									"value": "John"
+								}
+							]
+						}
+					}
+				},
+				{
+					"name": "Update User",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"John Doe Updated\",\n  \"bio\": \"Updated bio for John Doe\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8888/api/users/{{studentId}}",
+							"host": ["http://localhost:8888"],
+							"path": ["api", "users", "{{studentId}}"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "Courses (Public)",
+			"item": [
+				{
+					"name": "Get All Courses",
+					"request": {
+						"method": "GET",
+						"url": {
+							"raw": "http://localhost:8888/api/courses?page=0&size=10&sortBy=id&sortDirection=desc",
+							"host": ["http://localhost:8888"],
+							"path": ["api", "courses"],
+							"query": [
+								{
+									"key": "page",
+									"value": "0"
+								},
+								{
+									"key": "size",
+									"value": "10"
+								},
+								{
+									"key": "sortBy",
+									"value": "id"
+								},
+								{
+									"key": "sortDirection",
+									"value": "desc"
+								}
+							]
+						}
+					}
+				},
+				{
+					"name": "Get Course Details",
+					"request": {
+						"method": "GET",
+						"url": {
+							"raw": "http://localhost:8888/api/courses/{{courseId}}",
+							"host": ["http://localhost:8888"],
+							"path": ["api", "courses", "{{courseId}}"]
+						}
+					}
+				},
+				{
+					"name": "Get Courses by Category",
+					"request": {
+						"method": "GET",
+						"url": {
+							"raw": "http://localhost:8888/api/courses/category/Programming",
+							"host": ["http://localhost:8888"],
+							"path": ["api", "courses", "category", "Programming"]
+						}
+					}
+				},
+				{
+					"name": "Search Courses",
+					"request": {
+						"method": "GET",
+						"url": {
+							"raw": "http://localhost:8888/api/courses/search?keyword=Java",
+							"host": ["http://localhost:8888"],
+							"path": ["api", "courses", "search"],
+							"query": [
+								{
+									"key": "keyword",
+									"value": "Java"
+								}
+							]
+						}
+					}
+				},
+				{
+					"name": "Get All Categories",
+					"request": {
+						"method": "GET",
+						"url": {
+							"raw": "http://localhost:8888/api/courses/categories",
+							"host": ["http://localhost:8888"],
+							"path": ["api", "courses", "categories"]
+						}
+					}
+				},
+				{
+					"name": "Create Course (Instructor Auth)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 201) {",
+									"    const response = pm.response.json();",
+									"    if (response.success && response.data.id) {",
+									"        pm.environment.set('courseId', response.data.id);",
+									"    }",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{instructorToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"title\": \"Complete Java Programming Course\",\n  \"description\": \"Learn Java from basics to advanced concepts\",\n  \"category\": \"Programming\",\n  \"thumbnailUrl\": \"https://example.com/java-thumbnail.jpg\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8888/api/courses",
+							"host": ["http://localhost:8888"],
+							"path": ["api", "courses"]
+						}
+					}
+				},
+				{
+					"name": "Get Instructor Courses",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{instructorToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"url": {
+							"raw": "http://localhost:8888/api/courses/instructor/my-courses",
+							"host": ["http://localhost:8888"],
+							"path": ["api", "courses", "instructor", "my-courses"]
+						}
+					}
+				},
+				{
+					"name": "Update Course",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{instructorToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"title\": \"Complete Java Programming Course - Updated\",\n  \"description\": \"Learn Java from basics to advanced concepts with new content\",\n  \"category\": \"Programming\",\n  \"thumbnailUrl\": \"https://example.com/java-thumbnail-new.jpg\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8888/api/courses/{{courseId}}",
+							"host": ["http://localhost:8888"],
+							"path": ["api", "courses", "{{courseId}}"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "Instructor Operations",
+			"item": [
+				{
+					"name": "Create Course (Instructor)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 201) {",
+									"    const response = pm.response.json();",
+									"    if (response.success && response.data.id) {",
+									"        pm.environment.set('instructorCourseId', response.data.id);",
+									"    }",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{instructorToken}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"title\": \"Advanced Spring Boot Development\",\n  \"description\": \"Master Spring Boot framework with hands-on projects\",\n  \"category\": \"Programming\",\n  \"thumbnailUrl\": \"https://example.com/spring-boot-thumbnail.jpg\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8888/api/instructor/courses",
+							"host": ["http://localhost:8888"],
+							"path": ["api", "instructor", "courses"]
+						}
+					}
+				},
+				{
+					"name": "Get My Courses (Instructor)",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{instructorToken}}"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:8888/api/instructor/courses?page=0&size=10",
+							"host": ["http://localhost:8888"],
+							"path": ["api", "instructor", "courses"],
+							"query": [
+								{
+									"key": "page",
+									"value": "0"
+								},
+								{
+									"key": "size",
+									"value": "10"
+								}
+							]
+						}
+					}
+				},
+				{
+					"name": "Get Course Details (Instructor)",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{instructorToken}}"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:8888/api/instructor/courses/{{instructorCourseId}}",
+							"host": ["http://localhost:8888"],
+							"path": ["api", "instructor", "courses", "{{instructorCourseId}}"]
+						}
+					}
+				},
+				{
+					"name": "Update Course (Instructor)",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{instructorToken}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"title\": \"Advanced Spring Boot Development - Updated\",\n  \"description\": \"Master Spring Boot framework with hands-on projects and new modules\",\n  \"category\": \"Programming\",\n  \"thumbnailUrl\": \"https://example.com/spring-boot-thumbnail-new.jpg\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8888/api/instructor/courses/{{instructorCourseId}}",
+							"host": ["http://localhost:8888"],
+							"path": ["api", "instructor", "courses", "{{instructorCourseId}}"]
+						}
+					}
+				},
+				{
+					"name": "Create Module",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 201) {",
+									"    const response = pm.response.json();",
+									"    if (response.success && response.data.id) {",
+									"        pm.environment.set('moduleId', response.data.id);",
+									"    }",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{instructorToken}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"title\": \"Introduction to Spring Boot\",\n  \"courseId\": {{instructorCourseId}},\n  \"moduleOrder\": 1\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8888/api/instructor/courses/{{instructorCourseId}}/modules",
+							"host": ["http://localhost:8888"],
+							"path": ["api", "instructor", "courses", "{{instructorCourseId}}", "modules"]
+						}
+					}
+				},
+				{
+					"name": "Get Course Modules",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{instructorToken}}"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:8888/api/instructor/courses/{{instructorCourseId}}/modules",
+							"host": ["http://localhost:8888"],
+							"path": ["api", "instructor", "courses", "{{instructorCourseId}}", "modules"]
+						}
+					}
+				},
+				{
+					"name": "Update Module",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{instructorToken}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"title\": \"Introduction to Spring Boot - Updated\",\n  \"courseId\": {{instructorCourseId}},\n  \"moduleOrder\": 1\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8888/api/instructor/modules/{{moduleId}}",
+							"host": ["http://localhost:8888"],
+							"path": ["api", "instructor", "modules", "{{moduleId}}"]
+						}
+					}
+				},
+				{
+					"name": "Create Lesson",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 201) {",
+									"    const response = pm.response.json();",
+									"    if (response.success && response.data.id) {",
+									"        pm.environment.set('lessonId', response.data.id);",
+									"    }",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{instructorToken}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"title\": \"Setting up Spring Boot Project\",\n  \"moduleId\": {{moduleId}},\n  \"videoUrl\": \"https://example.com/lesson1-video.mp4\",\n  \"durationSeconds\": 1800,\n  \"lessonOrder\": 1\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8888/api/instructor/modules/{{moduleId}}/lessons",
+							"host": ["http://localhost:8888"],
+							"path": ["api", "instructor", "modules", "{{moduleId}}", "lessons"]
+						}
+					}
+				},
+				{
+					"name": "Get Module Lessons",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{instructorToken}}"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:8888/api/instructor/modules/{{moduleId}}/lessons",
+							"host": ["http://localhost:8888"],
+							"path": ["api", "instructor", "modules", "{{moduleId}}", "lessons"]
+						}
+					}
+				},
+				{
+					"name": "Update Lesson",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{instructorToken}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"title\": \"Setting up Spring Boot Project - Updated\",\n  \"moduleId\": {{moduleId}},\n  \"videoUrl\": \"https://example.com/lesson1-video-updated.mp4\",\n  \"durationSeconds\": 2100,\n  \"lessonOrder\": 1\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8888/api/instructor/lessons/{{lessonId}}",
+							"host": ["http://localhost:8888"],
+							"path": ["api", "instructor", "lessons", "{{lessonId}}"]
+						}
+					}
+				},
+				{
+					"name": "Get Dashboard Stats",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{instructorToken}}"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:8888/api/instructor/dashboard/stats",
+							"host": ["http://localhost:8888"],
+							"path": ["api", "instructor", "dashboard", "stats"]
+						}
+					}
+				},
+				{
+					"name": "Get Course Enrollments",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{instructorToken}}"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:8888/api/instructor/courses/{{instructorCourseId}}/enrollments?page=0&size=10",
+							"host": ["http://localhost:8888"],
+							"path": ["api", "instructor", "courses", "{{instructorCourseId}}", "enrollments"],
+							"query": [
+								{
+									"key": "page",
+									"value": "0"
+								},
+								{
+									"key": "size",
+									"value": "10"
+								}
+							]
+						}
+					}
+				},
+				{
+					"name": "Get Course Analytics",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{instructorToken}}"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:8888/api/instructor/courses/{{instructorCourseId}}/analytics",
+							"host": ["http://localhost:8888"],
+							"path": ["api", "instructor", "courses", "{{instructorCourseId}}", "analytics"]
+						}
+					}
+				},
+				{
+					"name": "Delete Lesson",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{instructorToken}}"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:8888/api/instructor/lessons/{{lessonId}}",
+							"host": ["http://localhost:8888"],
+							"path": ["api", "instructor", "lessons", "{{lessonId}}"]
+						}
+					}
+				},
+				{
+					"name": "Delete Module",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{instructorToken}}"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:8888/api/instructor/modules/{{moduleId}}",
+							"host": ["http://localhost:8888"],
+							"path": ["api", "instructor", "modules", "{{moduleId}}"]
+						}
+					}
+				},
+				{
+					"name": "Delete Course",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{instructorToken}}"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:8888/api/instructor/courses/{{instructorCourseId}}",
+							"host": ["http://localhost:8888"],
+							"path": ["api", "instructor", "courses", "{{instructorCourseId}}"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "Admin Operations",
+			"item": [
+				{
+					"name": "Get All Users (Admin)",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{adminToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"url": {
+							"raw": "http://localhost:8888/api/admin/users?page=0&size=20&sortBy=id&sortDirection=desc",
+							"host": ["http://localhost:8888"],
+							"path": ["api", "admin", "users"],
+							"query": [
+								{
+									"key": "page",
+									"value": "0"
+								},
+								{
+									"key": "size",
+									"value": "20"
+								},
+								{
+									"key": "sortBy",
+									"value": "id"
+								},
+								{
+									"key": "sortDirection",
+									"value": "desc"
+								}
+							]
+						}
+					}
+				},
+				{
+					"name": "Get Users by Role (Admin)",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{adminToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"url": {
+							"raw": "http://localhost:8888/api/admin/users?role=INSTRUCTOR&page=0&size=20",
+							"host": ["http://localhost:8888"],
+							"path": ["api", "admin", "users"],
+							"query": [
+								{
+									"key": "role",
+									"value": "INSTRUCTOR"
+								},
+								{
+									"key": "page",
+									"value": "0"
+								},
+								{
+									"key": "size",
+									"value": "20"
+								}
+							]
+						}
+					}
+				},
+				{
+					"name": "Get User by ID (Admin)",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{adminToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"url": {
+							"raw": "http://localhost:8888/api/admin/users/{{studentId}}",
+							"host": ["http://localhost:8888"],
+							"path": ["api", "admin", "users", "{{studentId}}"]
+						}
+					}
+				},
+				{
+					"name": "Create User (Admin)",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{adminToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Test User Admin\",\n  \"email\": \"testuser.admin@example.com\",\n  \"password\": \"TestPass123!\",\n  \"role\": \"STUDENT\",\n  \"bio\": \"Test user created by admin\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8888/api/admin/users",
+							"host": ["http://localhost:8888"],
+							"path": ["api", "admin", "users"]
+						}
+					}
+				},
+				{
+					"name": "Update User (Admin)",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{adminToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Test User Admin Updated\",\n  \"email\": \"testuser.admin@example.com\",\n  \"password\": \"TestPass123!\",\n  \"role\": \"STUDENT\",\n  \"bio\": \"Test user updated by admin\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8888/api/admin/users/{{studentId}}",
+							"host": ["http://localhost:8888"],
+							"path": ["api", "admin", "users", "{{studentId}}"]
+						}
+					}
+				},
+				{
+					"name": "Get All Courses (Admin)",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{adminToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"url": {
+							"raw": "http://localhost:8888/api/admin/courses?page=0&size=20&sortBy=id&sortDirection=desc",
+							"host": ["http://localhost:8888"],
+							"path": ["api", "admin", "courses"],
+							"query": [
+								{
+									"key": "page",
+									"value": "0"
+								},
+								{
+									"key": "size",
+									"value": "20"
+								},
+								{
+									"key": "sortBy",
+									"value": "id"
+								},
+								{
+									"key": "sortDirection",
+									"value": "desc"
+								}
+							]
+						}
+					}
+				},
+				{
+					"name": "Feature Course",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{adminToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"url": {
+							"raw": "http://localhost:8888/api/admin/courses/{{courseId}}/feature",
+							"host": ["http://localhost:8888"],
+							"path": ["api", "admin", "courses", "{{courseId}}", "feature"]
+						}
+					}
+				},
+				{
+					"name": "Unfeature Course",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{adminToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"url": {
+							"raw": "http://localhost:8888/api/admin/courses/{{courseId}}/unfeature",
+							"host": ["http://localhost:8888"],
+							"path": ["api", "admin", "courses", "{{courseId}}", "unfeature"]
+						}
+					}
+				},
+				{
+					"name": "Activate Course",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{adminToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"url": {
+							"raw": "http://localhost:8888/api/admin/courses/{{courseId}}/activate",
+							"host": ["http://localhost:8888"],
+							"path": ["api", "admin", "courses", "{{courseId}}", "activate"]
+						}
+					}
+				},
+				{
+					"name": "Deactivate Course",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{adminToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"url": {
+							"raw": "http://localhost:8888/api/admin/courses/{{courseId}}/deactivate",
+							"host": ["http://localhost:8888"],
+							"path": ["api", "admin", "courses", "{{courseId}}", "deactivate"]
+						}
+					}
+				},
+				{
+					"name": "Delete Course (Admin)",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{adminToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"url": {
+							"raw": "http://localhost:8888/api/admin/courses/{{courseId}}",
+							"host": ["http://localhost:8888"],
+							"path": ["api", "admin", "courses", "{{courseId}}"]
+						}
+					}
+				},
+				{
+					"name": "Get System Analytics",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{adminToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"url": {
+							"raw": "http://localhost:8888/api/admin/analytics/overview",
+							"host": ["http://localhost:8888"],
+							"path": ["api", "admin", "analytics", "overview"]
+						}
+					}
+				},
+				{
+					"name": "Get User Analytics",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{adminToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"url": {
+							"raw": "http://localhost:8888/api/admin/analytics/users",
+							"host": ["http://localhost:8888"],
+							"path": ["api", "admin", "analytics", "users"]
+						}
+					}
+				},
+				{
+					"name": "Get Course Analytics (Admin)",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{adminToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"url": {
+							"raw": "http://localhost:8888/api/admin/analytics/courses",
+							"host": ["http://localhost:8888"],
+							"path": ["api", "admin", "analytics", "courses"]
+						}
+					}
+				},
+				{
+					"name": "Get Enrollment Analytics",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{adminToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"url": {
+							"raw": "http://localhost:8888/api/admin/analytics/enrollments",
+							"host": ["http://localhost:8888"],
+							"path": ["api", "admin", "analytics", "enrollments"]
+						}
+					}
+				},
+				{
+					"name": "Delete User (Admin)",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{adminToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"url": {
+							"raw": "http://localhost:8888/api/admin/users/{{studentId}}",
+							"host": ["http://localhost:8888"],
+							"path": ["api", "admin", "users", "{{studentId}}"]
+						}
+					}
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:8080",
+			"type": "string"
+		},
+		{
+			"key": "studentToken",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "instructorToken",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "adminToken",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "studentId",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "instructorId",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "adminId",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "courseId",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "instructorCourseId",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "moduleId",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "lessonId",
+			"value": "",
+			"type": "string"
+		}
+	]
+}

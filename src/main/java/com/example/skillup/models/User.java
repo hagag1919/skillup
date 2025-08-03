@@ -71,7 +71,7 @@ public class User {
         this.bio = bio;
     }
     
-    // Lifecycle methods
+   
     @PrePersist
     protected void onCreate() {
         this.createdAt = LocalDateTime.now();
@@ -83,7 +83,7 @@ public class User {
         this.updatedAt = LocalDateTime.now();
     }
     
-    // Getters and Setters
+   
     public Long getId() {
         return id;
     }

@@ -43,6 +43,12 @@ public class Course {
     @Column(name = "instructor_id", nullable = false)
     private Long instructorId;
     
+    @Column(name = "featured", nullable = false)
+    private Boolean featured = false;
+    
+    @Column(name = "active", nullable = false)
+    private Boolean active = true;
+    
     @Column(name = "created_at")
     private LocalDateTime createdAt;
     
@@ -137,6 +143,22 @@ public class Course {
     
     public void setInstructorId(Long instructorId) {
         this.instructorId = instructorId;
+    }
+    
+    public Boolean getFeatured() {
+        return featured;
+    }
+    
+    public void setFeatured(Boolean featured) {
+        this.featured = featured;
+    }
+    
+    public Boolean getActive() {
+        return active;
+    }
+    
+    public void setActive(Boolean active) {
+        this.active = active;
     }
     
     public LocalDateTime getCreatedAt() {

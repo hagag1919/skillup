@@ -42,6 +42,9 @@ public interface LessonRepository extends JpaRepository<Lesson, Long> {
     @Query("SELECT SUM(l.durationSeconds) FROM Lesson l WHERE l.module.course.id = :courseId")
     Long calculateTotalDurationByCourseId(@Param("courseId") Long courseId);
     
+    @Query("SELECT COALESCE(SUM(l.durationSeconds), 0) FROM Lesson l WHERE l.module.course.id = :courseId")
+    Integer getTotalDurationByCourseId(@Param("courseId") Long courseId);
+    
     @Query("SELECT SUM(l.durationSeconds) FROM Lesson l WHERE l.module.id = :moduleId")
     Long calculateTotalDurationByModuleId(@Param("moduleId") Long moduleId);
 }

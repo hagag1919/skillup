@@ -2,12 +2,15 @@ package com.example.skillup.repo;
 
 import com.example.skillup.models.Course;
 import com.example.skillup.models.User;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface CourseRepository extends JpaRepository<Course, Long> {
@@ -15,15 +18,31 @@ public interface CourseRepository extends JpaRepository<Course, Long> {
     List<Course> findByTitleContainingIgnoreCase(String title);
 
     List<Course> findByCategory(String category);
+    
+    List<Course> findByCategoryIgnoreCase(String category);
 
     List<Course> findByCategoryContainingIgnoreCase(String category);
 
     List<Course> findByInstructor(User instructor);
 
     List<Course> findByInstructorId(Long instructorId);
+    
+    Page<Course> findByInstructorId(Long instructorId, Pageable pageable);
+    
+    long countByActive(Boolean active);
+    
+    long countByFeatured(Boolean featured);
+    
+    List<Course> findByTitleContainingIgnoreCaseOrDescriptionContainingIgnoreCase(String title, String description);
 
     @Query("SELECT DISTINCT c.category FROM Course c ORDER BY c.category")
     List<String> findAllCategories();
+    
+    @Query("SELECT DISTINCT c.category FROM Course c ORDER BY c.category")
+    List<String> findDistinctCategories();
+    
+    @Query("SELECT c FROM Course c LEFT JOIN FETCH c.modules m LEFT JOIN FETCH m.lessons WHERE c.id = :courseId")
+    Optional<Course> findByIdWithModulesAndLessons(@Param("courseId") Long courseId);
 
     long countByCategory(String category);
 
