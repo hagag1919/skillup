@@ -1,0 +1,8 @@
+package com.example.skillup.config;
+
+import org.springframework.context.annotation.Configuration;
+
+@Configuration
+public class WebConfig {
+  
+}

@@ -23,13 +23,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.skillup.dto.ApiResponseDto;
+import com.example.skillup.dto.PaginatedResponseDto;
 import com.example.skillup.dto.UserRegistrationDto;
 import com.example.skillup.models.Course;
 import com.example.skillup.models.User;
-import com.example.skillup.services.CourseService;
-import com.example.skillup.services.UserService;
-import com.example.skillup.services.EnrollmentService;
 import com.example.skillup.services.CertificateService;
+import com.example.skillup.services.CourseService;
+import com.example.skillup.services.EnrollmentService;
+import com.example.skillup.services.UserService;
 
 import jakarta.validation.Valid;
 
@@ -60,10 +61,20 @@ public class AdminController {
         return user;
     }
     
+    private <T> PaginatedResponseDto<T> createPaginatedResponse(Page<T> page) {
+        return new PaginatedResponseDto<>(
+            page.getContent(),
+            page.getNumber(),
+            page.getSize(),
+            page.getTotalElements(),
+            page.getTotalPages()
+        );
+    }
+    
     // =============== USER MANAGEMENT ===============
     
     @GetMapping("/users")
-    public ResponseEntity<ApiResponseDto<List<User>>> getAllUsers(
+    public ResponseEntity<ApiResponseDto<PaginatedResponseDto<User>>> getAllUsers(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size,
             @RequestParam(defaultValue = "id") String sortBy,
@@ -89,10 +100,12 @@ public class AdminController {
                 userPage = userService.getAllUsersPaginated(pageable);
             }
             
+            PaginatedResponseDto<User> paginatedResponse = createPaginatedResponse(userPage);
+            
             return ResponseEntity.ok(new ApiResponseDto<>(
                 true, 
                 "Users retrieved successfully", 
-                userPage.getContent()
+                paginatedResponse
             ));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -207,7 +220,7 @@ public class AdminController {
     // =============== COURSE MANAGEMENT ===============
     
     @GetMapping("/courses")
-    public ResponseEntity<ApiResponseDto<List<Course>>> getAllCoursesAdmin(
+    public ResponseEntity<ApiResponseDto<PaginatedResponseDto<Course>>> getAllCoursesAdmin(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size,
             @RequestParam(defaultValue = "id") String sortBy,
@@ -227,10 +240,12 @@ public class AdminController {
             
             Page<Course> coursePage = courseService.getCoursesPaginated(pageable);
             
+            PaginatedResponseDto<Course> paginatedResponse = createPaginatedResponse(coursePage);
+            
             return ResponseEntity.ok(new ApiResponseDto<>(
                 true, 
                 "Courses retrieved successfully", 
-                coursePage.getContent()
+                paginatedResponse
             ));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -361,94 +376,136 @@ public class AdminController {
     // =============== ANALYTICS AND REPORTING ===============
     
     @GetMapping("/analytics/overview")
-    public ResponseEntity<ApiResponseDto<Map<String, Object>>> getSystemOverview(
+    public ResponseEntity<ApiResponseDto<Map<String, Object>>> getDashboardOverview(
             Authentication authentication) {
-        
         try {
             User admin = getAuthenticatedAdmin(authentication);
             if (admin == null) {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN)
                     .body(new ApiResponseDto<>(false, "Admin access required", null));
             }
-            
-            Map<String, Object> analytics = userService.getSystemAnalytics();
+
+            Map<String, Object> overviewStats = userService.getDashboardOverview();
             return ResponseEntity.ok(new ApiResponseDto<>(
-                true, 
-                "System analytics retrieved successfully", 
-                analytics
+                true,
+                "Dashboard overview retrieved successfully",
+                overviewStats
             ));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(new ApiResponseDto<>(false, "Error retrieving analytics: " + e.getMessage(), null));
+                .body(new ApiResponseDto<>(false, "Error retrieving dashboard overview: " + e.getMessage(), null));
         }
     }
-    
+
     @GetMapping("/analytics/users")
     public ResponseEntity<ApiResponseDto<Map<String, Object>>> getUserAnalytics(
             Authentication authentication) {
-        
         try {
             User admin = getAuthenticatedAdmin(authentication);
             if (admin == null) {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN)
                     .body(new ApiResponseDto<>(false, "Admin access required", null));
             }
-            
-            Map<String, Object> userStats = userService.getUserAnalytics();
+
+            Map<String, Object> userAnalytics = userService.getUserAnalytics();
             return ResponseEntity.ok(new ApiResponseDto<>(
-                true, 
-                "User analytics retrieved successfully", 
-                userStats
+                true,
+                "User analytics retrieved successfully",
+                userAnalytics
             ));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(new ApiResponseDto<>(false, "Error retrieving user analytics: " + e.getMessage(), null));
         }
     }
-    
+
     @GetMapping("/analytics/courses")
     public ResponseEntity<ApiResponseDto<Map<String, Object>>> getCourseAnalytics(
             Authentication authentication) {
-        
         try {
             User admin = getAuthenticatedAdmin(authentication);
             if (admin == null) {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN)
                     .body(new ApiResponseDto<>(false, "Admin access required", null));
             }
-            
-            Map<String, Object> courseStats = courseService.getCourseAnalytics();
+
+            Map<String, Object> courseAnalytics = courseService.getCourseAnalytics();
             return ResponseEntity.ok(new ApiResponseDto<>(
-                true, 
-                "Course analytics retrieved successfully", 
-                courseStats
+                true,
+                "Course analytics retrieved successfully",
+                courseAnalytics
             ));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(new ApiResponseDto<>(false, "Error retrieving course analytics: " + e.getMessage(), null));
         }
     }
-    
+
     @GetMapping("/analytics/enrollments")
     public ResponseEntity<ApiResponseDto<Map<String, Object>>> getEnrollmentAnalytics(
             Authentication authentication) {
-        
         try {
             User admin = getAuthenticatedAdmin(authentication);
             if (admin == null) {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN)
                     .body(new ApiResponseDto<>(false, "Admin access required", null));
             }
-            
-            Map<String, Object> enrollmentStats = enrollmentService.getEnrollmentAnalytics();
+
+            Map<String, Object> enrollmentAnalytics = enrollmentService.getEnrollmentAnalytics();
             return ResponseEntity.ok(new ApiResponseDto<>(
-                true, 
-                "Enrollment analytics retrieved successfully", 
-                enrollmentStats
+                true,
+                "Enrollment analytics retrieved successfully",
+                enrollmentAnalytics
             ));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(new ApiResponseDto<>(false, "Error retrieving enrollment analytics: " + e.getMessage(), null));
+        }
+    }
+
+    @GetMapping("/users/search")
+    public ResponseEntity<ApiResponseDto<List<User>>> searchUsers(
+            @RequestParam String query,
+            Authentication authentication) {
+        try {
+            User admin = getAuthenticatedAdmin(authentication);
+            if (admin == null) {
+                return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                    .body(new ApiResponseDto<>(false, "Admin access required", null));
+            }
+
+            List<User> users = userService.searchUsers(query);
+            return ResponseEntity.ok(new ApiResponseDto<>(
+                true,
+                "Users retrieved successfully",
+                users
+            ));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(new ApiResponseDto<>(false, "Error retrieving users: " + e.getMessage(), null));
+        }
+    }
+
+    // =============== CATEGORY MANAGEMENT ===============
+
+    @GetMapping("/courses/categories")
+    public ResponseEntity<ApiResponseDto<List<String>>> getAllCategories(Authentication authentication) {
+        try {
+            User admin = getAuthenticatedAdmin(authentication);
+            if (admin == null) {
+                return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                    .body(new ApiResponseDto<>(false, "Admin access required", null));
+            }
+
+            List<String> categories = courseService.getAllCategories();
+            return ResponseEntity.ok(new ApiResponseDto<>(
+                true,
+                "Categories retrieved successfully",
+                categories
+            ));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(new ApiResponseDto<>(false, "Error retrieving categories: " + e.getMessage(), null));
         }
     }
 }

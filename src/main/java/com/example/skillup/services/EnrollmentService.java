@@ -1,6 +1,7 @@
 package com.example.skillup.services;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -14,7 +15,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.example.skillup.models.Course;
 import com.example.skillup.models.Enrollment;
-import com.example.skillup.models.EnrollmentId;
 import com.example.skillup.models.User;
 import com.example.skillup.repo.CourseRepository;
 import com.example.skillup.repo.EnrollmentRepository;
@@ -142,9 +142,37 @@ public class EnrollmentService {
         double completionRate = totalEnrollments > 0 ? (double) completedEnrollments / totalEnrollments * 100 : 0;
         analytics.put("completionRate", Math.round(completionRate * 100.0) / 100.0);
         
-        // Most popular courses
-        List<Object[]> popularCourses = enrollmentRepository.findMostPopularCourses();
-        analytics.put("popularCourses", popularCourses);
+        // Enrollment growth data - placeholder for monthly data
+        List<Map<String, Object>> enrollmentsByMonth = new ArrayList<>();
+        Map<String, Object> currentMonth = new HashMap<>();
+        currentMonth.put("month", "Current");
+        currentMonth.put("count", totalEnrollments);
+        enrollmentsByMonth.add(currentMonth);
+        analytics.put("enrollmentsByMonth", enrollmentsByMonth);
+        
+        // Enrollment growth - placeholder for daily data
+        List<Map<String, Object>> enrollmentGrowth = new ArrayList<>();
+        Map<String, Object> currentDay = new HashMap<>();
+        currentDay.put("date", java.time.LocalDate.now().toString());
+        currentDay.put("count", totalEnrollments);
+        enrollmentGrowth.add(currentDay);
+        analytics.put("enrollmentGrowth", enrollmentGrowth);
+        
+        // Most popular courses - converting Object[] to proper structure
+        List<Object[]> popularCoursesRaw = enrollmentRepository.findMostPopularCourses();
+        List<Map<String, Object>> topCourses = new ArrayList<>();
+        for (Object[] course : popularCoursesRaw) {
+            Map<String, Object> courseData = new HashMap<>();
+            courseData.put("courseId", course[0]);
+            courseData.put("enrollments", course[1]);
+            // We would need to join with Course table to get title, for now using courseId
+            courseData.put("courseTitle", "Course " + course[0]);
+            topCourses.add(courseData);
+        }
+        analytics.put("topCourses", topCourses);
+        
+        // For backward compatibility
+        analytics.put("popularCourses", popularCoursesRaw);
         
         // Users with most enrollments
         List<Object[]> activeUsers = enrollmentRepository.findUsersWithMostEnrollments();

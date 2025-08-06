@@ -1,6 +1,7 @@
 package com.example.skillup.services;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -13,7 +14,10 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.example.skillup.dto.UserRegistrationDto;
+import com.example.skillup.models.Course;
 import com.example.skillup.models.User;
+import com.example.skillup.repo.CourseRepository;
+import com.example.skillup.repo.EnrollmentRepository;
 import com.example.skillup.repo.UserRepository;
 
 @Service
@@ -24,6 +28,12 @@ public class UserService {
     
     @Autowired
     private PasswordEncoder passwordEncoder;
+    
+    @Autowired
+    private CourseRepository courseRepository;
+    
+    @Autowired
+    private EnrollmentRepository enrollmentRepository;
     
     public User registerUser(UserRegistrationDto registrationDto) {
         
@@ -101,6 +111,10 @@ public class UserService {
     
     public List<User> searchUsersByName(String name) {
         return userRepository.findByNameContainingIgnoreCase(name);
+    }
+    
+    public List<User> searchUsers(String query) {
+        return userRepository.findByNameContainingIgnoreCase(query);
     }
     
     public List<User> getUsersWithCreatedCourses() {
@@ -199,15 +213,72 @@ public class UserService {
     public Map<String, Object> getUserAnalytics() {
         Map<String, Object> analytics = new HashMap<>();
         
-        analytics.put("totalUsers", userRepository.count());
-        analytics.put("students", countUsersByRole("STUDENT"));
-        analytics.put("instructors", countUsersByRole("INSTRUCTOR"));
-        analytics.put("admins", countUsersByRole("ADMIN"));
+        long totalUsers = userRepository.count();
+        long students = countUsersByRole("STUDENT");
+        long instructors = countUsersByRole("INSTRUCTOR");
+        long admins = countUsersByRole("ADMIN");
+        
+        analytics.put("totalUsers", totalUsers);
+        
+        // User distribution by role
+        Map<String, Long> usersByRole = new HashMap<>();
+        usersByRole.put("STUDENT", students);
+        usersByRole.put("INSTRUCTOR", instructors);
+        usersByRole.put("ADMIN", admins);
+        analytics.put("usersByRole", usersByRole);
+        
+        // Individual counts for backward compatibility
+        analytics.put("students", students);
+        analytics.put("instructors", instructors);
+        analytics.put("admins", admins);
         
         // Active users (users with enrollments or created courses)
-        analytics.put("usersWithCourses", userRepository.findUsersWithCreatedCourses().size());
+        long usersWithCourses = userRepository.findUsersWithCreatedCourses().size();
+        analytics.put("usersWithCourses", usersWithCourses);
+        
+        // User growth data - placeholder for now, can be enhanced with actual date-based queries
+        List<Map<String, Object>> userGrowthData = new ArrayList<>();
+        Map<String, Object> currentMonth = new HashMap<>();
+        currentMonth.put("month", "Current");
+        currentMonth.put("count", totalUsers);
+        userGrowthData.add(currentMonth);
+        analytics.put("userGrowthData", userGrowthData);
+        
+        // Recent registrations - placeholder
+        List<Map<String, Object>> recentRegistrations = new ArrayList<>();
+        analytics.put("recentRegistrations", recentRegistrations);
         
         return analytics;
+    }
+    
+    public Map<String, Object> getDashboardOverview() {
+        Map<String, Object> overview = new HashMap<>();
+        
+        // Fetch total counts
+        long totalUsers = userRepository.count();
+        long totalStudents = countUsersByRole("STUDENT");
+        long totalInstructors = countUsersByRole("INSTRUCTOR");
+        
+        // Get actual course and enrollment counts
+        long totalCourses = courseRepository.count();
+        long totalEnrollments = enrollmentRepository.count();
+        
+        // Fetch recent users (limit to 5)
+        List<User> recentUsers = userRepository.findTop5ByOrderByCreatedAtDesc();
+        
+        // Fetch recent courses (limit to 5)
+        List<Course> recentCourses = courseRepository.findTop5ByOrderByCreatedAtDesc();
+        
+        // Add data to the overview map
+        overview.put("totalUsers", totalUsers);
+        overview.put("totalStudents", totalStudents);
+        overview.put("totalInstructors", totalInstructors);
+        overview.put("totalCourses", totalCourses);
+        overview.put("totalEnrollments", totalEnrollments);
+        overview.put("recentUsers", recentUsers);
+        overview.put("recentCourses", recentCourses);
+        
+        return overview;
     }
     
     private boolean isValidAdminRole(String role) {

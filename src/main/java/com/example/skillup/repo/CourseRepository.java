@@ -1,7 +1,8 @@
 package com.example.skillup.repo;
 
-import com.example.skillup.models.Course;
-import com.example.skillup.models.User;
+import java.util.List;
+import java.util.Optional;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -9,8 +10,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
-import java.util.Optional;
+import com.example.skillup.models.Course;
+import com.example.skillup.models.User;
 
 @Repository
 public interface CourseRepository extends JpaRepository<Course, Long> {
@@ -59,4 +60,6 @@ public interface CourseRepository extends JpaRepository<Course, Long> {
 
     @Query("SELECT c FROM Course c WHERE LOWER(c.instructor.name) LIKE LOWER(CONCAT('%', :instructorName, '%'))")
     List<Course> findByInstructorNameContainingIgnoreCase(@Param("instructorName") String instructorName);
+    
+    List<Course> findTop5ByOrderByCreatedAtDesc();
 }

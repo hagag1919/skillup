@@ -38,4 +38,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
     
     @Query("SELECT u FROM User u JOIN u.enrollments e WHERE e.courseId = :courseId")
     List<User> findUsersEnrolledInCourse(@Param("courseId") Long courseId);
+
+    List<User> findTop5ByOrderByCreatedAtDesc();
 }

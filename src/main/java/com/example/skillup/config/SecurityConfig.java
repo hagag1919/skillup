@@ -1,5 +1,7 @@
 package com.example.skillup.config;
 
+import java.util.Arrays;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -10,6 +12,9 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 @Configuration
 @EnableWebSecurity
@@ -21,19 +26,61 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.csrf(csrf -> csrf.disable())
+            .cors(cors -> cors.configurationSource(corsConfigurationSource()))
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(authz -> authz
-                // Public endpoints
+                // Public endpoints - Authentication
                 .requestMatchers("/api/auth/**").permitAll()
                 .requestMatchers("/api/users/stats/**").permitAll()
-                // Protected endpoints
+                
+                // Public endpoints - Course browsing (GET only)
+                .requestMatchers("GET", "/api/courses").permitAll()
+                .requestMatchers("GET", "/api/courses/").permitAll()
+                .requestMatchers("GET", "/api/courses/categories").permitAll()
+                .requestMatchers("GET", "/api/courses/search").permitAll()
+                .requestMatchers("GET", "/api/courses/category/**").permitAll()
+                .requestMatchers("GET", "/api/courses/*").permitAll()
+                
+                // Protected course management endpoints (POST, PUT, DELETE)
+                .requestMatchers("POST", "/api/courses").authenticated()
+                .requestMatchers("PUT", "/api/courses/**").authenticated()
+                .requestMatchers("DELETE", "/api/courses/**").authenticated()
+                
+                // Protected course content endpoints
+                .requestMatchers("/api/courses/**/modules").authenticated()
+                .requestMatchers("/api/courses/**/lessons").authenticated()
+                
+                // Other protected endpoints
                 .requestMatchers("/api/users/**").authenticated()
-                .requestMatchers("/api/courses/**").authenticated()
+                .requestMatchers("/api/student/**").authenticated()
+                .requestMatchers("/api/instructor/**").authenticated()
+                .requestMatchers("/api/admin/**").authenticated()
+
                 .anyRequest().authenticated()
             )
             .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
         
         return http.build();
+    }
+    
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+        configuration.setAllowedOrigins(Arrays.asList(
+            "http://localhost:5173",
+            "http://localhost:3000",
+            "http://127.0.0.1:5173",
+            "http://127.0.0.1:3000",
+            "http://localhost:5174",
+            "http://127.0.0.1:5174"
+        ));
+        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
+        configuration.setAllowedHeaders(Arrays.asList("*"));
+        configuration.setAllowCredentials(true);
+        
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+        return source;
     }
     
     @Bean

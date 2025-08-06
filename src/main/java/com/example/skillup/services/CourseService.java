@@ -1,5 +1,6 @@
 package com.example.skillup.services;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -271,10 +272,13 @@ public class CourseService {
         
         // Courses by category
         List<String> categories = courseRepository.findDistinctCategories();
-        Map<String, Long> coursesByCategory = new HashMap<>();
+        List<Map<String, Object>> coursesByCategory = new ArrayList<>();
         for (String category : categories) {
             long count = courseRepository.countByCategory(category);
-            coursesByCategory.put(category, count);
+            Map<String, Object> categoryData = new HashMap<>();
+            categoryData.put("category", category);
+            categoryData.put("count", count);
+            coursesByCategory.add(categoryData);
         }
         analytics.put("coursesByCategory", coursesByCategory);
         
@@ -285,6 +289,14 @@ public class CourseService {
         // Average enrollments per course
         double avgEnrollments = totalCourses > 0 ? (double) totalEnrollments / totalCourses : 0;
         analytics.put("averageEnrollmentsPerCourse", Math.round(avgEnrollments * 100.0) / 100.0);
+        
+        // Course creation data - placeholder for monthly data
+        List<Map<String, Object>> courseCreationData = new ArrayList<>();
+        Map<String, Object> currentMonth = new HashMap<>();
+        currentMonth.put("month", "Current");
+        currentMonth.put("count", totalCourses);
+        courseCreationData.add(currentMonth);
+        analytics.put("courseCreationData", courseCreationData);
         
         return analytics;
     }

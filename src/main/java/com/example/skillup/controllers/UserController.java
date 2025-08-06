@@ -6,7 +6,6 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -17,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.skillup.config.JwtUtils;
 import com.example.skillup.dto.ApiResponseDto;
 import com.example.skillup.dto.JwtResponseDto;
 import com.example.skillup.dto.LoginDto;
@@ -25,11 +25,9 @@ import com.example.skillup.dto.UserStatsDto;
 import com.example.skillup.models.User;
 import com.example.skillup.services.UserService;
 import com.example.skillup.utils.InputValidation;
-import com.example.skillup.config.JwtUtils;
 
 @RestController
 @RequestMapping("/api")
-@CrossOrigin(origins = "*", maxAge = 3600)
 public class UserController {
     
     @Autowired
@@ -182,6 +180,27 @@ public class UserController {
         } catch (Exception e) {
             return ResponseEntity.badRequest()
                     .body(ApiResponseDto.error("Search failed: " + e.getMessage()));
+        }
+    }
+
+    // Alternative endpoint that frontend might call with different base path
+    @GetMapping("/search")
+    public ResponseEntity<ApiResponseDto<List<User>>> searchUsersAlternative(@RequestParam String name) {
+        try {
+            // Validate search query
+            if (!InputValidation.isValidSearchQuery(name)) {
+                return ResponseEntity.badRequest()
+                        .body(new ApiResponseDto<>(false, "Invalid search query. Search term is required and must not contain special characters", null));
+            }
+            
+            // Sanitize the search input
+            String sanitizedName = InputValidation.sanitizeString(name);
+            
+            List<User> users = userService.searchUsersByName(sanitizedName);
+            return ResponseEntity.ok(new ApiResponseDto<>(true, "Search completed successfully", users));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ApiResponseDto<>(false, "Search failed: " + e.getMessage(), null));
         }
     }
     
