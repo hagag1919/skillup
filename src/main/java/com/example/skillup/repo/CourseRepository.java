@@ -42,9 +42,9 @@ public interface CourseRepository extends JpaRepository<Course, Long> {
     @Query("SELECT DISTINCT c.category FROM Course c ORDER BY c.category")
     List<String> findDistinctCategories();
     
-    @Query("SELECT c FROM Course c LEFT JOIN FETCH c.modules m LEFT JOIN FETCH m.lessons WHERE c.id = :courseId")
-    Optional<Course> findByIdWithModulesAndLessons(@Param("courseId") Long courseId);
-
+    @Query("SELECT c FROM Course c LEFT JOIN FETCH c.modules WHERE c.id = :courseId")
+    Optional<Course> findByIdWithModules(@Param("courseId") Long courseId);
+    
     long countByCategory(String category);
 
     long countByInstructor(User instructor);

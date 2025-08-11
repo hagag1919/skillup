@@ -29,6 +29,9 @@ public interface ModuleRepository extends JpaRepository<Module, Long> {
     @Query("SELECT m FROM Module m WHERE m.course.id = :courseId AND m.moduleOrder = :order")
     Module findByCourseIdAndModuleOrder(@Param("courseId") Long courseId, @Param("order") Integer order);
     
+    @Query("SELECT m FROM Module m LEFT JOIN FETCH m.lessons WHERE m.courseId = :courseId ORDER BY m.moduleOrder")
+    List<Module> findByCourseIdWithLessons(@Param("courseId") Long courseId);
+    
     @Query("SELECT MAX(m.moduleOrder) FROM Module m WHERE m.course.id = :courseId")
     Integer findMaxModuleOrderByCourseId(@Param("courseId") Long courseId);
     

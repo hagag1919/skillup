@@ -15,12 +15,13 @@ import org.springframework.transaction.annotation.Transactional;
 import com.example.skillup.dto.CourseCreateDto;
 import com.example.skillup.dto.CourseDetailDto;
 import com.example.skillup.models.Course;
-import com.example.skillup.models.Module;
 import com.example.skillup.models.Lesson;
+import com.example.skillup.models.Module;
 import com.example.skillup.models.User;
 import com.example.skillup.repo.CourseRepository;
-import com.example.skillup.repo.UserRepository;
 import com.example.skillup.repo.EnrollmentRepository;
+import com.example.skillup.repo.ModuleRepository;
+import com.example.skillup.repo.UserRepository;
 
 @Service
 @Transactional
@@ -34,6 +35,9 @@ public class CourseService {
     
     @Autowired
     private EnrollmentRepository enrollmentRepository;
+    
+    @Autowired
+    private ModuleRepository moduleRepository;
     
     public Course createCourse(CourseCreateDto courseDto, Long instructorId) {
 
@@ -94,12 +98,20 @@ public class CourseService {
     }
     
     public CourseDetailDto getCourseDetails(Long courseId) {
-        Optional<Course> courseOpt = courseRepository.findByIdWithModulesAndLessons(courseId);
+        // First, get the course with modules (one collection fetch)
+        Optional<Course> courseOpt = courseRepository.findByIdWithModules(courseId);
         if (courseOpt.isEmpty()) {
             throw new RuntimeException("Course not found with ID: " + courseId);
         }
         
         Course course = courseOpt.get();
+        
+        // Then, get modules with lessons (second collection fetch)
+        List<Module> modulesWithLessons = moduleRepository.findByCourseIdWithLessons(courseId);
+        
+        // Set the fetched modules with lessons to the course
+        course.setModules(modulesWithLessons);
+        
         CourseDetailDto detailDto = new CourseDetailDto();
         
 

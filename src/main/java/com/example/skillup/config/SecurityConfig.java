@@ -39,16 +39,18 @@ public class SecurityConfig {
                 .requestMatchers("GET", "/api/courses/categories").permitAll()
                 .requestMatchers("GET", "/api/courses/search").permitAll()
                 .requestMatchers("GET", "/api/courses/category/**").permitAll()
-                .requestMatchers("GET", "/api/courses/*").permitAll()
+                .requestMatchers("GET", "/api/courses/{id}").permitAll()
                 
                 // Protected course management endpoints (POST, PUT, DELETE)
                 .requestMatchers("POST", "/api/courses").authenticated()
-                .requestMatchers("PUT", "/api/courses/**").authenticated()
-                .requestMatchers("DELETE", "/api/courses/**").authenticated()
+                .requestMatchers("PUT", "/api/courses/{id}").authenticated()
+                .requestMatchers("DELETE", "/api/courses/{id}").authenticated()
                 
                 // Protected course content endpoints
-                .requestMatchers("/api/courses/**/modules").authenticated()
-                .requestMatchers("/api/courses/**/lessons").authenticated()
+                .requestMatchers("/api/courses/{id}/modules").authenticated()
+                .requestMatchers("/api/courses/{id}/modules/**").authenticated()
+                .requestMatchers("/api/courses/{id}/lessons").authenticated()
+                .requestMatchers("/api/courses/{id}/lessons/**").authenticated()
                 
                 // Other protected endpoints
                 .requestMatchers("/api/users/**").authenticated()
