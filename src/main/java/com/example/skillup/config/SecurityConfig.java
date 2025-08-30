@@ -71,7 +71,8 @@ public class SecurityConfig {
         configuration.setAllowedOriginPatterns(Arrays.asList(
             "https://skillup-website-swart.vercel.app",
             "https://skillup-admindashboard.vercel.app",
-            "https://skillup-admindashboard-6rvavuay8-hagag1919s-projects.vercel.app"
+            "https://skillup-admindashboard-6rvavuay8-hagag1919s-projects.vercel.app",
+            "https://skillup-website-git-main-hagag1919s-projects.vercel.app"
         ));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type", "X-Requested-With", "Accept"));
